@@ -78,10 +78,18 @@ def base64_decode(arguments, message):
     except:
         return "Can't decode it"
 
+def help_message(arguments, message):
+    result = "Hey, %s!\nI can accept only these commands:\n" % message["from"]["first_name"]
+    for command in CMD:
+        result += "\t%s\n" % command
+
+    return result
+
 URL = "https://api.telegram.org/bot%s/" % BOT_TOKEN
 CMD = {
     "/whoisyourdaddy": about,
     "/base64": base64_decode,
+    "/help": help_message,
 }
 MyURL = "https://messiah.ddns.net/telegram/"
 MyURL = ""
