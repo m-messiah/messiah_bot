@@ -7,8 +7,14 @@ import time
 import logging
 import signal
 
+
+last_line = " ".join(open("puller.log", "r").readlines()[-5:])
+last = int(last_line[last_line.rfind("LAST="):])
+print(last)
 logging.basicConfig(filename="puller.log", level=logging.INFO)
-last = 681692814
+
+
+
 URL = "https://api.telegram.org/bot%s/getUpdates" % BOT_TOKEN
 
 
