@@ -23,8 +23,7 @@ class Handler(tornado.web.RequestHandler):
                 message = update['message']
                 text = message['text']
 
-                logging.info("MESSAGE\t%s (%s)\t%s" % (
-                    message['from']['username'],
+                logging.info("MESSAGE\t%s\t%s" % (
                     message['from']['id'],
                     text))
 
@@ -32,18 +31,16 @@ class Handler(tornado.web.RequestHandler):
                     command, *arguments = text.split(" ", 1)
                     reply = CMD.get(command, not_found)(arguments, message)
 
-                    logging.info("REPLY\t%s (%s)\t%s" % (
-                        message['from']['username'],
+                    logging.info("REPLY\t%s\t%s" % (
                         message['from']['id'],
                         reply
                     ))
 
                     self.sendMessage(reply, command, message['from']['id'])
                 else:
-                    logging.info("COMMAND NOT FOUND\t%s (%s)" % (
-                        message['from']['username'],
-                        message['from']['id'],
-                    ))
+                    logging.info("COMMAND NOT FOUND\t%s"
+                                 % message['from']['id']
+                    )
                     self.sendMessage(not_found("", message), "/not_found",
                                      message['from']['id'])
             except Exception as e:
