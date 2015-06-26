@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import requests
 from bot_token import BOT_TOKEN
 import json
@@ -6,8 +8,8 @@ import logging
 import signal
 
 logging.basicConfig(filename="puller.log", level=logging.INFO)
-last = 0
-URL = "https://api.telegram.org/bot%s/getUpdates?offset=%s" % (BOT_TOKEN, last)
+last = 681692814
+URL = "https://api.telegram.org/bot%s/getUpdates" % BOT_TOKEN
 
 
 def signal_term_handler(signal, frame):
@@ -19,7 +21,7 @@ if __name__ == '__main__':
     signal.signal(signal.SIGTERM, signal_term_handler)
     try:
         while True:
-            r = requests.get(URL)
+            r = requests.get(URL + "?offset=%s" % (last + 1))
             if r.status_code == 200:
                 for message in r.json()["result"]:
                     last = int(message["update_id"])

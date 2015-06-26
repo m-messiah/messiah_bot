@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 __author__ = 'm_messiah'
 import logging
 import signal

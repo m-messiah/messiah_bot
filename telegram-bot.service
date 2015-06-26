@@ -1,0 +1,15 @@
+[Unit]
+    Description=Telegram Bot
+    After=network.target
+
+[Service]
+    ExecStart=/home/telegram/messiah_bot/messiah_bot.py
+    WorkingDirectory=/home/telegram/messiah_bot/
+    User=telegram
+    Group=telegram
+    Restart=always
+    PIDFile=/var/run/messiah_bot.pid
+    RestartSec=500ms
+
+[Install]
+    WantedBy=multi-user.target
