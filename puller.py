@@ -21,7 +21,7 @@ if __name__ == '__main__':
         while True:
             r = requests.get(URL)
             if r.status_code == 200:
-                for message in r.json():
+                for message in r.json()["result"]:
                     last = int(message["update_id"])
                     requests.post("https://messiah.ddns.net:44380/telegram/",
                                   data=json.dumps(message),
