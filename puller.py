@@ -9,7 +9,7 @@ import signal
 
 
 last_line = " ".join(open("puller.log", "r").readlines()[-5:])
-last = int(last_line[last_line.rfind("LAST="):])
+last = int(last_line[last_line.rfind("LAST=")+5:].strip())
 print(last)
 logging.basicConfig(filename="puller.log", level=logging.INFO)
 
