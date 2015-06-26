@@ -21,9 +21,7 @@ if __name__ == '__main__':
         while True:
             r = requests.get(URL)
             if r.status_code == 200:
-                messages = filter(lambda u: u["update_id"] not in last,
-                                  r.json()["result"])
-                for message in messages:
+                for message in r.json():
                     last = int(message["update_id"])
                     requests.post("https://messiah.ddns.net:44380/telegram/",
                                   data=json.dumps(message),

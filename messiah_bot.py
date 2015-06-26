@@ -82,6 +82,7 @@ CMD = {
     "/base64": base64_decode,
 }
 MyURL = "https://messiah.ddns.net/telegram/"
+MyURL = ""
 api = Session()
 application = tornado.web.Application([
     (r"/", Handler),
