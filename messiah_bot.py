@@ -24,26 +24,11 @@ MyURL = ""  # TODO: add url here, when get valid HTTPS
 def not_found(arguments, message):
     return "Command not found. Try /help"
 
-def send_message(text, command, id):
-    payload = {
-        'chat_id': id,
-        'text': text,
-        # 'reply_markup': keyboard
-    }
-
-    api.post(URL + "sendMessage", data=payload)
-
-
-def send_sticker(sticker, id):
-    STICKERS = {
-        "adventure_time": "BQADAgADeAcAAlOx9wOjY2jpAAHq9DUC",
-        "congrats": "BQADAgADdQsAAkKvaQAB4TD4Sp7DKP0C",
-    }
-    payload = {
-        'chat_id': id,
-        'sticker': STICKERS.get(sticker, ""),
-    }
-    api.post(URL + "sendSticker", data=payload)
+def send_reply(response):
+    if 'sticker' in response:
+        api.post(URL + "sendSticker", data=response)
+    elif 'text' in response:
+        api.post(URL + "sendMessage", data=response)
 
 # noinspection PyAbstractClass
 class Handler(tornado.web.RequestHandler):
@@ -58,33 +43,29 @@ class Handler(tornado.web.RequestHandler):
                         message['from']['id'],
                         text))
 
-                    if "What time is it" in text:
-                        send_sticker("adventure_time", message['from']['id'])
-
-                    elif "complete" in text:
-                        send_sticker("congrats", message["from"]['id'])
-
                     if text[0] == '/':
                         command, *arguments = text.split(" ", 1)
-                        reply = CMD.get(command, not_found)(arguments, message)
+                        response = CMD.get(command, not_found)(arguments,
+                                                               message)
 
                         logging.info("REPLY\t%s\t%s" % (
                             message['from']['id'],
-                            reply
+                            response
                         ))
 
-                        send_message(reply, command, message['from']['id'])
+                        send_reply(response)
                     else:
-                        reply = CMD["0"](message)
+                        response = CMD["0"](message)
                         logging.info("REPLY\t%s\t%s" % (
                             message['from']['id'],
-                            reply
+                            response
                         ))
-                        send_message(reply, "human", message['from']['id'])
+                        send_reply(response)
 
                 elif message.get("file_id"):
-                    send_message("File id = %s" % message.get("file_id"),
-                                 "get_id", message['from']['id'])
+                    send_reply({'chat_id': message['from']['id'],
+                                'text': "File id = %s" % message.get("file_id")
+                                })
 
             except Exception as e:
                 logging.warning(str(e))
