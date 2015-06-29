@@ -22,7 +22,9 @@ MyURL = ""  # TODO: add url here, when get valid HTTPS
 
 
 def not_found(arguments, message):
-    return "Command not found. Try /help"
+    return {'chat_id': message['from']['id'],
+            'text': "Command not found. Try /help"
+            }
 
 def send_reply(response):
     if 'sticker' in response:
