@@ -3,6 +3,7 @@ __author__ = 'm_messiah'
 from base64 import b64decode
 from random import choice
 from fuzzywuzzy import process
+import time
 
 responses = {
     "Hello": ["Hi there!", "Hi!", "Welcome!", "Hello, {name}!"],
@@ -10,7 +11,8 @@ responses = {
     "Hi!": ["Hi there!", "Hello, {name}!", "Welcome!", "Hello!"],
     "Welcome": ["Hi there!", "Hi!", "Hello!", "Hello, {name}!",],
     "How are you?": ["I'm fine!", "Status: Working...", "I'm doing great."],
-    "Good bye": ["Bye, {name}!"]
+    "Good bye": ["Bye, {name}!"],
+    "What time is it?": ["Adventure Time!", "{date} "]
 }
 
 def human_response(message):
@@ -21,7 +23,7 @@ def human_response(message):
 
     return choice(responses.get(leven[0])
                   ).format_map({'name': message["from"].get("first_name", ""),
-                                'date': message.get("date", ""),
+                                'date': time.ctime(int(message.get("date"))),
                                 })
 
 
