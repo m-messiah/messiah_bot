@@ -58,7 +58,7 @@ class Handler(tornado.web.RequestHandler):
                         message['from']['id'],
                         text))
 
-                    if text == "What time is it?":
+                    if "What time is it" in text:
                         send_sticker("adventure_time", message['from']['id'])
 
                     elif "complete" in text:
