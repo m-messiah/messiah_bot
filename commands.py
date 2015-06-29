@@ -73,7 +73,7 @@ def help_message(arguments, message):
 
 
 CMD = {
-    "0": human_response,
+    "<speech>": human_response,
     "/whoisyourdaddy": about,
     "/base64": base64_decode,
     "/help": help_message,

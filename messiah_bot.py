@@ -55,7 +55,7 @@ class Handler(tornado.web.RequestHandler):
 
                         send_reply(response)
                     else:
-                        response = CMD["0"](message)
+                        response = CMD["<speech>"](message)
                         logging.info("REPLY\t%s\t%s" % (
                             message['from']['id'],
                             response
