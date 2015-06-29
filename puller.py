@@ -8,11 +8,15 @@ import logging
 import signal
 
 
-last_line = " ".join(open("puller.log", "r").readlines()[-5:])
-last = int(last_line[last_line.rfind("LAST=")+5:].strip())
-print(last)
-logging.basicConfig(filename="puller.log", level=logging.INFO)
+try:
+    last_line = " ".join(open("puller.log", "r").readlines()[-5:])
+    last = int(last_line[last_line.rfind("LAST=")+5:].strip())
+except (ValueError, FileNotFoundError):
+    last = 681692856
 
+logging.basicConfig(filename="puller.log", level=logging.INFO)
+requests_log = logging.getLogger("requests.packages.urllib3")
+requests_log.setLevel(logging.WARNING)
 
 
 URL = "https://api.telegram.org/bot%s/getUpdates" % BOT_TOKEN
