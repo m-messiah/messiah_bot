@@ -13,6 +13,8 @@ from commands import CMD
 
 
 logging.basicConfig(filename="conversation.log", level=logging.INFO)
+requests_log = logging.getLogger("requests.packages.urllib3")
+requests_log.setLevel(logging.WARNING)
 
 
 URL = "https://api.telegram.org/bot%s/" % BOT_TOKEN
