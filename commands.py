@@ -12,7 +12,7 @@ responses = {
     "Welcome": ["Hi there!", "Hi!", "Hello!", "Hello, {name}!",],
     "How are you?": ["I'm fine!", "Status: Working...", "I'm doing great."],
     "Good bye": ["Bye, {name}!"],
-    "What time is it?": ["Adventure Time!", "{date} "]
+    "What time is it?": ["Adventure Time!", "{date} UTC"]
 }
 
 def human_response(message):
