@@ -62,10 +62,12 @@ class Handler(tornado.web.RequestHandler):
                         ))
                         send_reply(response)
 
-                elif message.get("file_id"):
-                    send_reply({'chat_id': message['from']['id'],
-                                'text': "File id = %s" % message.get("file_id")
-                                })
+                elif message.get("sticker"):
+                    send_reply(
+                        {'chat_id': message['from']['id'],
+                         'text': "Sticker id = %s" % message[
+                             "sticker"].get("file_id")
+                        })
 
             except Exception as e:
                 logging.warning(str(e))
