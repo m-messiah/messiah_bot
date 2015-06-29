@@ -22,14 +22,15 @@ STICKERS = {
 def human_response(message):
     leven = process.extract(message.get("text", ""),
                             RESPONSES.keys(), limit=1)[0]
-    if leven[1] < 75:
-        return "I can not understand you"
 
-    response = {'chat_id': message['from']['id'],
-                'text': choice(RESPONSES.get(leven[0])).format_map(
-                    {'name': message["from"].get("first_name", ""),
-                     'date': time.ctime(int(message.get("date"))), }
-                )}
+    response = {'chat_id': message['from']['id']}
+    if leven[1] < 75:
+        response['text'] = "I can not understand you"
+    else:
+        response['text'] = choice(RESPONSES.get(leven[0])).format_map(
+            {'name': message["from"].get("first_name", ""),
+             'date': time.ctime(int(message.get("date"))), }
+        )
 
     if response['text'] == "Adventure Time!":
         response['sticker'] = STICKERS['adventure_time']
