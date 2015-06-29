@@ -14,12 +14,12 @@ responses = {
 }
 
 def human_response(message):
-    leven = process.extract(message.get("text", ""), responses.keys(), limit=1)
-    if leven[0][1] < 75:
-        response = "I can not understand you"
-    else:
-        response = leven[0][0]
-    return choice(responses.get(response)
+    leven = process.extract(message.get("text", ""),
+                            responses.keys(), limit=1)[0]
+    if leven[1] < 75:
+        return "I can not understand you"
+
+    return choice(responses.get(leven[0])
                   ).format_map({'name': message["from"].get("first_name", ""),
                                 'date': message.get("date", ""),
                                 })
