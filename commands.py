@@ -1,6 +1,8 @@
 # coding=utf-8
+from urllib.parse import unquote, quote
+
 __author__ = 'm_messiah'
-from base64 import b64decode
+from base64 import b64decode, b64encode
 from random import choice
 from fuzzywuzzy import process
 import time
@@ -54,28 +56,40 @@ You can find this nickname at:
     }
     return response
 
-def base64_decode(arguments, message):
+def base64_code(arguments, message):
     response = {'chat_id': message['from']['id']}
     try:
         response['text'] = b64decode(" ".join(arguments).encode("utf8"))
     except:
-        response['text'] = "Can't decode it"
+        response['text'] = b64encode(" ".join(arguments).encode("utf8"))
     finally:
         return response
 
 def help_message(arguments, message):
     response = {'chat_id': message['from']['id']}
     result = ["Hey, %s!" % message["from"].get("first_name"),
-              "\rI can accept only these commands:"]
+              "\rI can accept these commands:"]
     for command in CMD:
         result.append(command)
     response['text'] = "\n\t".join(result)
     return response
 
+def uri(arguments, message):
+    response = {'chat_id': message['from']['id']}
+    try:
+        response['text'] = unquote(" ".join(arguments).encode("utf8"))
+        if response['text'] == " ".join(arguments).encode("utf8"):
+            response['text'] = quote(" ".join(arguments).encode("utf8"))
+    except Exception as e:
+        response['text'] = "Error: %s" % e
+    finally:
+        return response
+
 
 CMD = {
     "<speech>": human_response,
     "/whoisyourdaddy": about,
-    "/base64": base64_decode,
+    "/base64": base64_code,
     "/help": help_message,
+    "/uri": uri,
 }
