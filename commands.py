@@ -77,7 +77,7 @@ def help_message(arguments, message):
 def uri(arguments, message):
     response = {'chat_id': message['from']['id']}
     try:
-        response['text'] = unquote(" ".join(arguments).encode("utf8"))
+        response['text'] = unquote(" ".join(arguments))
         if response['text'] == " ".join(arguments).encode("utf8"):
             response['text'] = quote(" ".join(arguments).encode("utf8"))
     except Exception as e:
