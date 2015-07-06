@@ -69,8 +69,14 @@ class Handler(tornado.web.RequestHandler):
                         send_reply(response)
                         LAST_COMMAND[message["from"]["id"]] = command
                     else:
-                        response = CMD.get(LAST_COMMAND[message["from"]["id"]],
-                                           CMD["<speech>"])(None, message)
+                        if message["from"]["id"] in LAST_COMMAND:
+                            response_func = CMD.get(
+                                LAST_COMMAND[message["from"]["id"]],
+                                CMD["<speech>"]
+                            )
+                        else:
+                            response_func = CMD["<speech>"]
+                        response = response_func(None, message)
                         logging.info("REPLY\t%s\t%s" % (
                             message['from']['id'],
                             response

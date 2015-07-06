@@ -57,6 +57,13 @@ You can find this nickname at:
     return response
 
 def base64_code(arguments, message):
+    if arguments == "":
+        response = {'chat_id': message['from']['id'],
+                    'text': "Enter Base64 encoded/plain text"}
+        return response
+    elif arguments is None:
+        arguments = message["text"]
+
     response = {'chat_id': message['from']['id']}
     try:
         response['text'] = b64decode(arguments.encode("utf8"))
@@ -75,6 +82,12 @@ def help_message(arguments, message):
     return response
 
 def uri(arguments, message):
+    if arguments == "":
+        response = {'chat_id': message['from']['id'],
+                    'text': "Enter URI encoded/needed to be encode text"}
+        return response
+    elif arguments is None:
+        arguments = message["text"]
     response = {'chat_id': message['from']['id']}
     try:
         response['text'] = unquote(arguments)
