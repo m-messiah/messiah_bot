@@ -21,7 +21,7 @@ STICKERS = {
     "adventure_time": "BQADAgADeAcAAlOx9wOjY2jpAAHq9DUC",
 }
 
-def human_response(message):
+def human_response(_, message):
     leven = process.extract(message.get("text", ""),
                             RESPONSES.keys(), limit=1)[0]
 
@@ -59,9 +59,9 @@ You can find this nickname at:
 def base64_code(arguments, message):
     response = {'chat_id': message['from']['id']}
     try:
-        response['text'] = b64decode(" ".join(arguments).encode("utf8"))
+        response['text'] = b64decode(arguments.encode("utf8"))
     except:
-        response['text'] = b64encode(" ".join(arguments).encode("utf8"))
+        response['text'] = b64encode(arguments.encode("utf8"))
     finally:
         return response
 
@@ -77,13 +77,85 @@ def help_message(arguments, message):
 def uri(arguments, message):
     response = {'chat_id': message['from']['id']}
     try:
-        response['text'] = unquote(" ".join(arguments))
-        if response['text'] == " ".join(arguments):
-            response['text'] = quote(" ".join(arguments).encode("utf8"))
+        response['text'] = unquote(arguments)
+        if response['text'] == arguments:
+            response['text'] = quote(arguments.encode("utf8"))
     except Exception as e:
         response['text'] = "Error: %s" % e
     finally:
         return response
+
+
+def morse(arguments, message):
+    if arguments == "":
+        response = {'chat_id': message['from']['id'],
+                    'text': "Enter your morse code",
+                    'reply_markup': {'keyboard': [[".", "-"]]}
+                    }
+        return response
+    elif arguments is None:
+        arguments = message["text"]
+
+    MORSE_EN = {
+        '.....': '5', '-.--.-': '(', '..--..': '?', '.----': '1',
+        '---...': ':', '......': '.', '----.': '9', '---..': '8',
+        '..---': '2', '--..--': '!', '....-': '4', '-....': '6',
+        '-.-.-.': ';', '-----': '0', '...--': '3',
+        '.-..-.': '"', '--...': '7', '/': ' ', '.-.-.-': ',',
+        '---': 'O', '--.': 'G', '-...': 'B', '-..-': 'X',
+        '.-.': 'R', '--.-': 'Q', '--..': 'Z', '.--': 'W',
+        '.-': 'A', '..': 'I', '-.-.': 'C', '..-.': 'F',
+        '-.--': 'Y', '-': 'T', '.': 'E', '.-..': 'L', '...': 'S',
+        '..-': 'U', '-.-': 'K', '-..': 'D', '.---': 'J',
+        '.--.': 'P', '--': 'M', '-.': 'N', '....': 'H',
+        '...-': 'V', '.----.': "'", '-....-': "–", '-..-.': "/", '.--.-.': "@"}
+
+    MORSE_RU = {
+        '.....': '5', '-.--.-': '(', '..--..': '?', '.----': '1',
+        '---...': ':', '......': '.', '----.': '9', '---..': '8',
+        '..---': '2', '--..--': '!', '....-': '4', '-....': '6',
+        '-.-.-.': ';', '-----': '0', '.-.-.-': ',', '...--': '3',
+        '.-..-.': '"', '--...': '7', '/': ' ', '.----.': "'",
+        "..-..": 'Э', "---": 'О', "--.": 'Г', "-...": 'Б',
+        "-..-": 'Ь', ".-.": 'Р', "--.-": 'Щ', "--..": 'З',
+        ".--": 'В', ".-": 'А', "..": 'И', "-.-.": 'Ц',
+        "..-.": 'Ф', "..--": 'Ю', "-": 'Т', ".": 'Е',
+        ".-.-": 'Я', ".-..": 'Л', "--.--": 'Ъ', "...": 'С',
+        "..-": 'У', "----": 'Ш', "---.": 'Ч', "-.-": 'К',
+        "-..": 'Д', ".---": 'Й', ".--.": 'П', "--": 'М',
+        "-.": 'Н', "....": 'Х', "...-": 'Ж', "-.--": "Ы", '-....-': '–',
+        '-..-.': '/', '.--.-.': '@'}
+
+    def decode(text):
+        return "".join(letters.get(c, "_") for c in text)
+
+    def invert(word):
+        # ord('-') = 45, ord('.') = 46
+        return word.translate({46: 45, 45: 46})
+
+    letters = MORSE_EN
+    response = {'chat_id': message['from']['id']}
+    arguments = arguments.split()
+    plain_text = decode(arguments)
+    decrypted_text = ["Answer:"]
+    if any(c is not "_" for c in plain_text):
+        decrypted_text.append("eng:\t%s" % plain_text)
+
+    plain_text = decode(map(invert, arguments))
+    if any(c is not "_" for c in plain_text):
+        decrypted_text.append("eng_rev:\t%s" % plain_text)
+
+    letters = MORSE_RU
+    plain_text = decode(arguments)
+    if any(c is not "_" for c in plain_text):
+        decrypted_text.append("ru:\t%s" % plain_text)
+
+    plain_text = decode(map(invert, arguments))
+    if any(c is not "_" for c in plain_text):
+        decrypted_text.append("ru rev:\t%s" % plain_text)
+
+    response["text"] = "\n".join(decrypted_text)
+    return response
 
 
 CMD = {
@@ -92,4 +164,5 @@ CMD = {
     "/base64": base64_code,
     "/help": help_message,
     "/uri": uri,
+    "/morse": morse,
 }

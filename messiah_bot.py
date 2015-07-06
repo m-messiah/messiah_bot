@@ -12,13 +12,15 @@ from bot_token import BOT_TOKEN
 from commands import CMD
 
 
-logging.basicConfig(filename="conversation.log", level=logging.INFO)
+logging.basicConfig(filename="conversation.log", level=logging.DEBUG)
 requests_log = logging.getLogger("requests.packages.urllib3")
 requests_log.setLevel(logging.WARNING)
 
 
 URL = "https://api.telegram.org/bot%s/" % BOT_TOKEN
 MyURL = ""  # TODO: add url here, when get valid HTTPS
+
+LAST_COMMAND = {}
 
 
 def not_found(arguments, message):
@@ -27,6 +29,7 @@ def not_found(arguments, message):
             }
 
 def send_reply(response):
+    logging.debug("SENT\t%s" % response)
     if 'sticker' in response:
         api.post(URL + "sendSticker", data=response)
     elif 'text' in response:
@@ -47,6 +50,15 @@ class Handler(tornado.web.RequestHandler):
 
                     if text[0] == '/':
                         command, *arguments = text.split(" ", 1)
+                        if len(arguments):
+                            arguments = arguments[0]
+                        else:
+                            arguments = ""
+                        logging.debug("REQUEST\t%s\t%s\t'%s'" % (
+                            message['from']['id'],
+                            command,
+                            arguments
+                        ))
                         response = CMD.get(command, not_found)(arguments,
                                                                message)
 
@@ -54,15 +66,17 @@ class Handler(tornado.web.RequestHandler):
                             message['from']['id'],
                             response
                         ))
-
                         send_reply(response)
+                        LAST_COMMAND[message["from"]["id"]] = command
                     else:
-                        response = CMD["<speech>"](message)
+                        response = CMD.get(LAST_COMMAND[message["from"]["id"]],
+                                           CMD["<speech>"])(None, message)
                         logging.info("REPLY\t%s\t%s" % (
                             message['from']['id'],
                             response
                         ))
                         send_reply(response)
+                        del LAST_COMMAND[message["from"]["id"]]
 
                 elif message.get("sticker"):
                     send_reply(
