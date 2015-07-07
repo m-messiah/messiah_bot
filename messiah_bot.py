@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
 __author__ = 'm_messiah'
 import logging
@@ -16,7 +16,7 @@ except:
 from commands import CMD
 
 
-logging.basicConfig(filename="conversation.log", level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 requests_log = logging.getLogger("requests.packages.urllib3")
 requests_log.setLevel(logging.WARNING)
 
@@ -48,9 +48,8 @@ class Handler(tornado.web.RequestHandler):
                 message = update['message']
                 text = message.get('text')
                 if text:
-                    logging.info("MESSAGE\t%s\t%s" % (
-                        message['from']['id'],
-                        text))
+                    logging.info("MESSAGE FROM\t%s"
+                                 % message['from']['id'])
 
                     if text[0] == '/':
                         command, *arguments = text.split(" ", 1)
@@ -66,10 +65,6 @@ class Handler(tornado.web.RequestHandler):
                         response = CMD.get(command, not_found)(arguments,
                                                                message)
 
-                        logging.info("REPLY\t%s\t%s" % (
-                            message['from']['id'],
-                            response
-                        ))
                         send_reply(response)
                         LAST_COMMAND[message["from"]["id"]] = command
                     else:
@@ -81,10 +76,6 @@ class Handler(tornado.web.RequestHandler):
                         else:
                             response_func = CMD["<speech>"]
                         response = response_func(None, message)
-                        logging.info("REPLY\t%s\t%s" % (
-                            message['from']['id'],
-                            response
-                        ))
                         send_reply(response)
                         del LAST_COMMAND[message["from"]["id"]]
 
