@@ -9,7 +9,10 @@ import tornado.web
 import tornado.escape
 from os import environ as ENV
 
-from bot_token import BOT_TOKEN
+try:
+    from bot_token import BOT_TOKEN
+except:
+    BOT_TOKEN = ENV["TOKEN"]
 from commands import CMD
 
 
