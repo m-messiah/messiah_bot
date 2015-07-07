@@ -67,6 +67,7 @@ def base64_code(arguments, message):
     response = {'chat_id': message['from']['id']}
     try:
         response['text'] = b64decode(arguments.encode("utf8"))
+        assert len(response['text'])
     except:
         response['text'] = b64encode(arguments.encode("utf8"))
     finally:
