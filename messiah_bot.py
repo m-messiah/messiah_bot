@@ -22,7 +22,7 @@ requests_log.setLevel(logging.WARNING)
 
 
 URL = "https://api.telegram.org/bot%s/" % BOT_TOKEN
-MyURL = ""  # TODO: add url here, when get valid HTTPS
+MyURL = "https://messiah-bot.herokuapp.com"  # TODO: add url here, when get valid HTTPS
 
 LAST_COMMAND = {}
 
