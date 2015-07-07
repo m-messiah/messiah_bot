@@ -7,6 +7,7 @@ from requests import Session
 import tornado.ioloop
 import tornado.web
 import tornado.escape
+from os import environ as ENV
 
 from bot_token import BOT_TOKEN
 from commands import CMD
@@ -114,7 +115,7 @@ if __name__ == '__main__':
         if set_hook.status_code != 200:
             logging.error("Can't set hook: %s. Quit." % set_hook.text)
             exit(1)
-        application.listen(8888)
+        application.listen(ENV["PORT"])
         tornado.ioloop.IOLoop.current().start()
     except KeyboardInterrupt:
         signal_term_handler(signal.SIGTERM, None)

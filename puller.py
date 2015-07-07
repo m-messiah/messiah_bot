@@ -35,7 +35,7 @@ if __name__ == '__main__':
             if r.status_code == 200:
                 for message in r.json()["result"]:
                     last = int(message["update_id"])
-                    requests.post("https://messiah.ddns.net:44380/telegram/",
+                    requests.post("http://messiah-bot.herokuapp.com/",
                                   data=json.dumps(message),
                                   headers={'Content-type': 'application/json',
                                            'Accept': 'text/plain'},
