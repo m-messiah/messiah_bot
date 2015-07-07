@@ -49,7 +49,9 @@ class Handler(tornado.web.RequestHandler):
                 text = message.get('text')
                 if text:
                     logging.info("MESSAGE FROM\t%s"
-                                 % message['from']['id'])
+                                 % message['from']['username']
+                                   if 'username' in message['from']
+                                   else message['from']['id'])
 
                     if text[0] == '/':
                         command, *arguments = text.split(" ", 1)
@@ -59,8 +61,8 @@ class Handler(tornado.web.RequestHandler):
                             arguments = ""
                         logging.debug("REQUEST\t%s\t%s\t'%s'" % (
                             message['from']['id'],
-                            command,
-                            arguments
+                            command.encode("utf8"),
+                            arguments.encode("utf8")
                         ))
                         response = CMD.get(command, not_found)(arguments,
                                                                message)
