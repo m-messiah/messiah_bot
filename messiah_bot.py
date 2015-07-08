@@ -94,7 +94,7 @@ class Handler(tornado.web.RequestHandler):
 
 def signal_term_handler(signal, frame):
     logging.error("Got SIGTERM. Quit.")
-    api.get(URL + "setWebhook?url=")
+    #api.get(URL + "setWebhook?url=")
     exit(0)
 
 api = Session()
