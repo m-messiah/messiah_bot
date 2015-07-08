@@ -11,7 +11,7 @@ RESPONSES = {
     "Hello": ["Hi there!", "Hi!", "Welcome!", "Hello, {name}!"],
     "Hi there": ["Hello!", "Hello, {name}!", "Hi!", "Welcome!"],
     "Hi!": ["Hi there!", "Hello, {name}!", "Welcome!", "Hello!"],
-    "Welcome": ["Hi there!", "Hi!", "Hello!", "Hello, {name}!",],
+    "Welcome": ["Hi there!", "Hi!", "Hello!", "Hello, {name}!", ],
     "How are you?": ["I'm fine!", "Status: Working...", "I'm doing great."],
     "Good bye": ["Bye, {name}!"],
     "What time is it?": ["Adventure Time!", "{date} UTC"],
@@ -21,15 +21,15 @@ STICKERS = {
     "adventure_time": "BQADAgADeAcAAlOx9wOjY2jpAAHq9DUC",
 }
 
+
 def human_response(_, message):
-    leven = process.extract(message.get("text", ""),
-                            RESPONSES.keys(), limit=1)[0]
+    leven = process.extract(message.get("text", ""), RESPONSES, limit=1)[0]
 
     response = {'chat_id': message['from']['id']}
     if leven[1] < 75:
         response['text'] = "I can not understand you"
     else:
-        response['text'] = choice(RESPONSES.get(leven[0])).format_map(
+        response['text'] = choice(RESPONSES[leven[0]]).format_map(
             {'name': message["from"].get("first_name", ""),
              'date': time.ctime(int(message.get("date"))), }
         )
@@ -41,20 +41,23 @@ def human_response(_, message):
     return response
 
 
-def about(arguments, message):
-    response = {
-        'chat_id': message['from']['id'],
-        'text':  """Hey, %s!
-My author is @m_messiah.
-You can find this nickname at:
-    + Telegram
-    + Twitter
-    + Instagram
-    + VK
-    + GitHub (m-messiah)
-    """ % message["from"].get("first_name")
-    }
-    return response
+def start(_, message):
+    return {'chat_id': message['from']['id'], 'text': "I am awake!"}
+
+
+def about(_, message):
+    return {'chat_id': message['from']['id'],
+            'text': "Hey, %s!\n"
+                    "My author is @m_messiah."
+                    "You can find this nickname at:"
+                    "\t+ Telegram"
+                    "\t+ Twitter"
+                    "\t+ Instagram"
+                    "\t+ VK"
+                    "\t+ GitHub (m-messiah)"
+                    % message["from"]["first_name"]
+            }
+
 
 def base64_code(arguments, message):
     if arguments == "":
@@ -73,7 +76,8 @@ def base64_code(arguments, message):
     finally:
         return response
 
-def help_message(arguments, message):
+
+def help_message(_, message):
     response = {'chat_id': message['from']['id']}
     result = ["Hey, %s!" % message["from"].get("first_name"),
               "\rI can accept these commands:"]
@@ -81,6 +85,7 @@ def help_message(arguments, message):
         result.append(command)
     response['text'] = "\n\t".join(result)
     return response
+
 
 def uri(arguments, message):
     if arguments == "":
@@ -102,10 +107,11 @@ def uri(arguments, message):
 
 def morse(arguments, message):
     if arguments == "":
-        response = {'chat_id': message['from']['id'],
-                    'text': "Enter your morse code",
-                    'reply_markup': {'keyboard': [[".", "-"]]}
-                    }
+        response = {
+            'chat_id': message['from']['id'],
+            'text': "Enter your morse code",
+            'reply_markup': {'keyboard': [[".", "-"], ]}
+        }
         return response
     elif arguments is None:
         arguments = message["text"]
@@ -179,4 +185,5 @@ CMD = {
     "/help": help_message,
     "/uri": uri,
     "/morse": morse,
+    "/start": start,
 }
