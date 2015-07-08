@@ -23,7 +23,8 @@ STICKERS = {
 
 
 def human_response(_, message):
-    leven = process.extract(message.get("text", ""), RESPONSES, limit=1)[0]
+    leven = process.extract(message.get("text", ""),
+                            RESPONSES.keys(), limit=1)[0]
 
     response = {'chat_id': message['from']['id']}
     if leven[1] < 75:
