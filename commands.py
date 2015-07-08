@@ -6,6 +6,7 @@ from base64 import b64decode, b64encode
 from random import choice
 from fuzzywuzzy import process
 import time
+from json import dumps
 
 RESPONSES = {
     "Hello": ["Hi there!", "Hi!", "Welcome!", "Hello, {name}!"],
@@ -110,7 +111,7 @@ def morse(arguments, message):
         response = {
             'chat_id': message['from']['id'],
             'text': "Enter your morse code",
-            'reply_markup': {'keyboard': [[".", "-"], ]}
+            'reply_markup': dumps({'keyboard': [[".", "-"]]})
         }
         return response
     elif arguments is None:
