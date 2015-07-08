@@ -111,7 +111,6 @@ def morse(arguments, message):
         response = {
             'chat_id': message['from']['id'],
             'text': "Enter your morse code",
-            'reply_markup': dumps({'keyboard': [[".", "-"]]})
         }
         return response
     elif arguments is None:
