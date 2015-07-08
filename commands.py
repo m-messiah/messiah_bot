@@ -6,7 +6,6 @@ from base64 import b64decode, b64encode
 from random import choice
 from fuzzywuzzy import process
 import time
-from json import dumps
 
 RESPONSES = {
     "Hello": ["Hi there!", "Hi!", "Welcome!", "Hello, {name}!"],

@@ -17,7 +17,7 @@ try:
 except ImportError:
     BOT_TOKEN = environ["TOKEN"]
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 logging.getLogger("requests.packages.urllib3").setLevel(logging.WARNING)
 
 URL = "https://api.telegram.org/bot%s/" % BOT_TOKEN
@@ -58,11 +58,7 @@ class Handler(RequestHandler):
                              else sender['id'])
 
                 if text[0] == '/':
-                    command, *arguments = text.split(" ", 1)
-                    if len(arguments):
-                        arguments = arguments[0]
-                    else:
-                        arguments = ""
+                    command, _, arguments = text.partition(" ")
                     logging.debug("REQUEST\t%s\t%s\t'%s'",
                                   sender['id'],
                                   command.encode("utf8"),
