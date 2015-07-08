@@ -17,7 +17,7 @@ try:
 except ImportError:
     BOT_TOKEN = environ["TOKEN"]
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 logging.getLogger("requests.packages.urllib3").setLevel(logging.WARNING)
 
 URL = "https://api.telegram.org/bot%s/" % BOT_TOKEN
