@@ -26,12 +26,12 @@ def human_response(_, message):
     leven = process.extract(message.get("text", ""),
                             RESPONSES.keys(), limit=1)[0]
 
-    response = {'chat_id': message['from']['id']}
+    response = {'chat_id': message['chat']['id']}
     if leven[1] < 75:
         response['text'] = "I can not understand you"
     else:
         response['text'] = choice(RESPONSES[leven[0]]).format_map(
-            {'name': message["from"].get("first_name", ""),
+            {'name': message['chat'].get("first_name", ""),
              'date': time.ctime(int(message.get("date"))), }
         )
 
@@ -43,11 +43,11 @@ def human_response(_, message):
 
 
 def start(_, message):
-    return {'chat_id': message['from']['id'], 'text': "I am awake!"}
+    return {'chat_id': message['chat']['id'], 'text': "I am awake!"}
 
 
 def about(_, message):
-    return {'chat_id': message['from']['id'],
+    return {'chat_id': message['chat']['id'],
             'text': "Hey, %s!\n"
                     "My author is @m_messiah."
                     "You can find this nickname at:"
@@ -56,19 +56,19 @@ def about(_, message):
                     "\t+ Instagram"
                     "\t+ VK"
                     "\t+ GitHub (m-messiah)"
-                    % message["from"]["first_name"]
+                    % message['from']["first_name"]
             }
 
 
 def base64_code(arguments, message):
     if arguments == "":
-        response = {'chat_id': message['from']['id'],
+        response = {'chat_id': message['chat']['id'],
                     'text': "Enter Base64 encoded/plain text"}
         return response
     elif arguments is None:
         arguments = message["text"]
 
-    response = {'chat_id': message['from']['id']}
+    response = {'chat_id': message['chat']['id']}
     try:
         response['text'] = b64decode(arguments.encode("utf8"))
         assert len(response['text'])
@@ -79,7 +79,7 @@ def base64_code(arguments, message):
 
 
 def help_message(_, message):
-    response = {'chat_id': message['from']['id']}
+    response = {'chat_id': message['chat']['id']}
     result = ["Hey, %s!" % message["from"].get("first_name"),
               "\rI can accept these commands:"]
     for command in CMD:
@@ -90,12 +90,12 @@ def help_message(_, message):
 
 def uri(arguments, message):
     if arguments == "":
-        response = {'chat_id': message['from']['id'],
+        response = {'chat_id': message['chat']['id'],
                     'text': "Enter URI encoded/needed to be encode text"}
         return response
     elif arguments is None:
         arguments = message["text"]
-    response = {'chat_id': message['from']['id']}
+    response = {'chat_id': message['chat']['id']}
     try:
         response['text'] = unquote(arguments)
         if response['text'] == arguments:
@@ -109,7 +109,7 @@ def uri(arguments, message):
 def morse(arguments, message):
     if arguments == "":
         response = {
-            'chat_id': message['from']['id'],
+            'chat_id': message['chat']['id'],
             'text': "Enter your morse code",
         }
         return response
@@ -154,7 +154,7 @@ def morse(arguments, message):
         return word.translate({46: 45, 45: 46})
 
     letters = MORSE_EN
-    response = {'chat_id': message['from']['id']}
+    response = {'chat_id': message['chat']['id']}
     arguments = arguments.split()
     plain_text = decode(arguments)
     decrypted_text = ["Answer:"]

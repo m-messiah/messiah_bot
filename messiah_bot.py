@@ -27,7 +27,7 @@ LAST_COMMAND = {}
 
 def not_found(_, message):
     return {
-        'chat_id': message['from']['id'],
+        'chat_id': message['chat']['id'],
         'text': "Command not found. Try /help"
     }
 
@@ -50,7 +50,7 @@ class Handler(RequestHandler):
             logging.debug("Request: %s", self.request.body)
             update = json_decode(self.request.body)
             message = update['message']
-            sender = message['from']
+            sender = message['chat']
             text = message.get('text')
             if text:
                 logging.info("MESSAGE FROM\t%s",
