@@ -1,5 +1,5 @@
 # coding=utf-8
-from urllib.parse import unquote, quote
+from urllib import unquote, quote
 
 __author__ = 'm_messiah'
 from base64 import b64decode, b64encode
@@ -30,9 +30,9 @@ def human_response(_, message):
     if leven[1] < 75:
         response['text'] = "I can not understand you"
     else:
-        response['text'] = choice(RESPONSES[leven[0]]).format_map(
-            {'name': message['chat'].get("first_name", ""),
-             'date': time.ctime(int(message.get("date"))), }
+        response['text'] = choice(RESPONSES[leven[0]]).format(
+            name=message['chat'].get("first_name", ""),
+            date=time.ctime(int(message.get("date")))
         )
 
     if response['text'] == "Adventure Time!":
@@ -49,13 +49,13 @@ def start(_, message):
 def about(_, message):
     return {'chat_id': message['chat']['id'],
             'text': "Hey, %s!\n"
-                    "My author is @m_messiah."
-                    "You can find this nickname at:"
-                    "\t+ Telegram"
-                    "\t+ Twitter"
-                    "\t+ Instagram"
-                    "\t+ VK"
-                    "\t+ GitHub (m-messiah)"
+                    "My author is @m_messiah.\n"
+                    "You can find this nickname at:\n"
+                    "\t+ Telegram\n"
+                    "\t+ Twitter\n"
+                    "\t+ Instagram\n"
+                    "\t+ VK\n"
+                    "\t+ GitHub (m-messiah)\n"
                     % message['from']["first_name"]
             }
 

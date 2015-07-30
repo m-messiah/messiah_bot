@@ -1,14 +1,11 @@
-#!/usr/bin/env python3
-
 __author__ = 'm_messiah'
-import logging
-from signal import signal, SIGTERM
 from os import environ
+import urllib
+from flask import Flask, request, jsonify
+from google.appengine.api import urlfetch
 
-from requests import Session
-from tornado.ioloop import IOLoop
-from tornado.web import Application, RequestHandler
-from tornado.escape import json_decode
+app = Flask(__name__)
+app.config['DEBUG'] = True
 
 from commands import CMD
 
@@ -17,12 +14,13 @@ try:
 except ImportError:
     BOT_TOKEN = environ["TOKEN"]
 
-logging.basicConfig(level=logging.INFO)
-logging.getLogger("requests.packages.urllib3").setLevel(logging.WARNING)
-
 URL = "https://api.telegram.org/bot%s/" % BOT_TOKEN
-MyURL = "https://messiah-bot.herokuapp.com"
+MyURL = "https://messiah-bot.appspot.com"
 LAST_COMMAND = {}
+
+
+def error():
+    return jsonify(result="Info", text="Messiah_bot")
 
 
 def not_found(_, message):
@@ -33,50 +31,57 @@ def not_found(_, message):
 
 
 def send_reply(response):
-    logging.debug("SENT\t%s", response)
+    app.logger.debug("SENT\t%s", response)
+    payload = urllib.urlencode(response)
     if 'sticker' in response:
-        api.post(URL + "sendSticker", data=response)
+        urlfetch.fetch(url=URL + "sendSticker",
+                       payload=payload,
+                       method=urlfetch.POST)
     elif 'text' in response:
-        api.post(URL + "sendMessage", data=response)
+        o = urlfetch.fetch(URL + "sendMessage",
+                           payload=payload,
+                           method=urlfetch.POST)
+        app.logger.info(str(o.content))
 
 
-# noinspection PyAbstractClass
-class Handler(RequestHandler):
-    def get(self):
-        self.write({"result": "Ok", "text": "I am awake!"})
-
-    def post(self):
+@app.route('/', methods=['POST', 'GET'])
+def index():
+    if request.method == 'GET':
+        return error()
+    else:
+        if 'Content-Type' not in request.headers:
+            return error()
+        if request.headers['Content-Type'] != 'application/json':
+            return error()
+        app.logger.debug("Request: %s", request)
         try:
-            logging.debug("Request: %s", self.request.body)
-            update = json_decode(self.request.body)
+            update = request.json
             message = update['message']
             sender = message['chat']
             text = message.get('text')
             if text:
-                logging.info("MESSAGE FROM\t%s",
-                             sender['username'] if 'username' in sender
-                             else sender['id'])
+                app.logger.info("MESSAGE FROM\t%s",
+                                sender['username'] if 'username' in sender
+                                else sender['id'])
 
                 if text[0] == '/':
                     command, _, arguments = text.partition(" ")
-                    logging.debug("REQUEST\t%s\t%s\t'%s'",
-                                  sender['id'],
-                                  command.encode("utf8"),
-                                  arguments.encode("utf8")
-                    )
+                    app.logger.debug("REQUEST\t%s\t%s\t'%s'",
+                                     sender['id'],
+                                     command.encode("utf8"),
+                                     arguments.encode("utf8"))
                     response = CMD.get(command, not_found)(arguments, message)
-
                     send_reply(response)
                     LAST_COMMAND[sender["id"]] = command
                 else:
                     if sender["id"] in LAST_COMMAND:
                         response_func = CMD.get(LAST_COMMAND[sender["id"]],
                                                 CMD["<speech>"])
+                        del LAST_COMMAND[sender["id"]]
                     else:
                         response_func = CMD["<speech>"]
                     response = response_func(None, message)
                     send_reply(response)
-                    del LAST_COMMAND[sender["id"]]
 
             elif message.get("sticker"):
                 send_reply({
@@ -85,28 +90,14 @@ class Handler(RequestHandler):
                             % message["sticker"].get("file_id")
                 })
 
-            self.write({"result": "Ok", "text": "Accepted"})
-
+            return jsonify(result="OK", text="Accepted")
         except Exception as e:
-            logging.warning(str(e))
-            self.write({"result": "Fail", "text": "Error"})
+            app.logger.warning(str(e))
+            return jsonify(result="Fail", text=str(e))
 
 
-def signal_term_handler(sig, _):
-    logging.error("Got %s. Quit.", sig)
-    exit(0)
+@app.errorhandler(404)
+def page_not_found(e):
+    """Return a custom 404 error."""
+    return 'Sorry, nothing at this URL.', 404
 
-api = Session()
-application = Application([(r"/", Handler), ])
-
-if __name__ == '__main__':
-    signal(SIGTERM, signal_term_handler)
-    try:
-        set_hook = api.get(URL + "setWebhook?url=%s" % MyURL)
-        if set_hook.status_code != 200:
-            logging.error("Can't set hook: %s. Quit." % set_hook.text)
-            exit(1)
-        application.listen(environ["PORT"])
-        IOLoop.current().start()
-    except KeyboardInterrupt:
-        signal_term_handler(SIGTERM, None)
