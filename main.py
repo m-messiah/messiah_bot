@@ -5,7 +5,7 @@ from flask import Flask, request, jsonify
 from google.appengine.api import urlfetch
 
 app = Flask(__name__)
-app.config['DEBUG'] = True
+app.config['DEBUG'] = False
 
 from commands import CMD
 
@@ -41,7 +41,7 @@ def send_reply(response):
         o = urlfetch.fetch(URL + "sendMessage",
                            payload=payload,
                            method=urlfetch.POST)
-        app.logger.info(str(o.content))
+        app.logger.debug(str(o.content))
 
 
 @app.route('/', methods=['POST', 'GET'])
@@ -60,9 +60,9 @@ def index():
             sender = message['chat']
             text = message.get('text')
             if text:
-                app.logger.info("MESSAGE FROM\t%s",
-                                sender['username'] if 'username' in sender
-                                else sender['id'])
+                app.logger.debug("MESSAGE FROM\t%s",
+                                 sender['username'] if 'username' in sender
+                                 else sender['id'])
 
                 if text[0] == '/':
                     command, _, arguments = text.partition(" ")
