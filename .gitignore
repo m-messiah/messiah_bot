@@ -1,4 +1,2 @@
-.idea
-*.pyc
-bot_token.py
-lib/
+conf.toml
+messiah_bot

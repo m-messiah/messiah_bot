@@ -1,0 +1,13 @@
+[Unit]
+Description=Telegram Bot
+After=network.target
+
+[Service]
+ExecStart=/opt/bot/messiah_bot /opt/bot/conf.toml
+User=bot
+Restart=always
+RestartSec=5
+WorkingDirectory=/opt/bot
+
+[Install]
+WantedBy=multi-user.target
