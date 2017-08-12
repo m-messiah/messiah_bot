@@ -33,7 +33,7 @@ func main() {
 	http.HandleFunc("/", BotHandle)
 	log.WithFields(log.Fields{"port": port}).Info("Start bot server")
 	for _, chatid := range config.Admins {
-		go sendMessage(chatid, "А я вот перезапустился только что")
+		go sendSticker(chatid, "А вот и Я")
 	}
 	http.ListenAndServe(":"+port, nil)
 }
