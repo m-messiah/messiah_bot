@@ -5,6 +5,8 @@ import (
 	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
+	"net/url"
+	"strconv"
 	"strings"
 )
 
@@ -21,26 +23,38 @@ func BotHandle(w http.ResponseWriter, r *http.Request) {
 		command := "/start"
 		botLog.WithFields(log.Fields{"command": command}).Debug("Start")
 		message := "Привет! А тебе точно сюда надо?"
-		sendMessage(w, update.Message.Chat.ID, command, message)
+		answerMessage(w, update.Message.Chat.ID, command, message)
 		return
 	}
 
 	if isCommand(update.Message.Text, "/stop") {
 		command := "/stop"
 		botLog.WithFields(log.Fields{"command": command}).Debug("Start")
-		sendMessage(w, update.Message.Chat.ID, command, "Это ничего не изменит...")
+		answerMessage(w, update.Message.Chat.ID, command, "Это ничего не изменит...")
 		return
 	}
 
 	if isCommand(update.Message.Text, "/help") {
 		command := "/help"
 		botLog.WithFields(log.Fields{"command": command}).Debug("Start")
-		sendMessage(w, update.Message.Chat.ID, command, "Еще не готово")
+		answerMessage(w, update.Message.Chat.ID, command, "Еще не готово")
 		return
 	}
 }
 
-func sendMessage(w http.ResponseWriter, chatID int64, command, text string) {
+func sendMessage(chatID int64, text string) {
+	_, err := http.PostForm(
+		"https://api.telegram.org/bot"+config.Token+"/sendMessage",
+		url.Values{
+			"chat_id": {strconv.FormatInt(chatID, 10)},
+			"text":    {text},
+		})
+	if err != nil {
+		log.WithFields(log.Fields{"chat": chatID, "text": text}).Error(err.Error())
+	}
+}
+
+func answerMessage(w http.ResponseWriter, chatID int64, command, text string) {
 	msg := Response{Chatid: chatID, Text: text, Method: "sendMessage"}
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)

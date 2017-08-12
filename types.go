@@ -9,6 +9,7 @@ type Config struct {
 	LogLevel string
 	Name     string
 	Admins   []int64
+	Token    string
 }
 
 // Response to Telegram
@@ -20,7 +21,7 @@ type Response struct {
 
 // Chat Telegram structure
 type Chat struct {
-	ID int64 `json:"chat_id"`
+	ID int64 `json:"id"`
 }
 
 // Message Telegram structure
