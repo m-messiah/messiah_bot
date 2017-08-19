@@ -6,6 +6,7 @@ type Config struct {
 	Name     string
 	Admins   []int64
 	Token    string
+	MacAddr  string
 }
 
 // Response to Telegram
@@ -56,4 +57,11 @@ type Message struct {
 type Update struct {
 	Message       *Message
 	EditedMessage *Message `json:"edited_message"`
+}
+
+type MACAddress [6]byte
+
+type MagicPacket struct {
+	header  [6]byte
+	payload [16]MACAddress
 }

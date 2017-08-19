@@ -49,11 +49,12 @@ func answerSticker(w http.ResponseWriter, chatID int64, command, sticker_name st
 }
 
 var stickerSet = map[string]Sticker{
-	"Ждун Error":      Sticker{Emoji: "😥", FileID: "CAADAgADXAIAAkcVaAmc8uhlUE4ieAI"},
 	"meh":             Sticker{Emoji: "😒", FileID: "CAADAgADXAADgGsjBmPStIDI-4GcAg"},
 	"SimonCat":        Sticker{Emoji: "😊", FileID: "CAADAgADTxUAAkKvaQABYO6WZm1tea0C"},
-	"Хуяк в Продакшн": Sticker{Emoji: "😎", FileID: "CAADAgADOwAD3W4LAAH3w0JtBvzbBAI"},
-	"Нормально Делай": Sticker{Emoji: "🤓", FileID: "CAADAgADOQAD3W4LAAGgNFabvTJ0YQI"},
 	"А вот и Я":       Sticker{Emoji: "😉", FileID: "CAADAgADBCAAAp7OCwABGh2pHw4IibgC"},
+	"Ждун Error":      Sticker{Emoji: "😥", FileID: "CAADAgADXAIAAkcVaAmc8uhlUE4ieAI"},
+	"НетПути":         Sticker{Emoji: "🙅", FileID: "CAADAgADQgIAAkcVaAkgm32pA7RR2wI"},
+	"Нормально Делай": Sticker{Emoji: "🤓", FileID: "CAADAgADOQAD3W4LAAGgNFabvTJ0YQI"},
+	"Хуяк в Продакшн": Sticker{Emoji: "😎", FileID: "CAADAgADOwAD3W4LAAH3w0JtBvzbBAI"},
 	"Я Сделяль":       Sticker{Emoji: "☹", FileID: "CAADAgADVQIAAoBrIwZYTAonqLtuZgI"},
 }

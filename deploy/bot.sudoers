@@ -1,2 +1,2 @@
-Cmnd_Alias RESTART = /bin/systemctl restart tor*, /bin/systemctl restart nginx*, /bin/systemctl restart bot*
-bot ALL=NOPASSWD: RESTART
+Cmnd_Alias SYSTEMCTL = /bin/systemctl restart *, /bin/systemctl status *
+bot ALL=NOPASSWD: SYSTEMCTL
