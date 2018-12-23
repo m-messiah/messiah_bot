@@ -6,7 +6,11 @@ type Config struct {
 	Name     string
 	Admins   []int64
 	Token    string
-	MacAddr  string
+	Devices  map[string]Device
+}
+
+type Device struct {
+	MacAddr string
 }
 
 // Response to Telegram

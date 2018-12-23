@@ -52,9 +52,9 @@ func executeStatus(w http.ResponseWriter, chatID int64, botLog *log.Entry, servi
 	answerMessage(w, chatID, command, output_head)
 }
 
-func executePoweron(w http.ResponseWriter, chatID int64, botLog *log.Entry) {
+func executePoweron(w http.ResponseWriter, chatID int64, botLog *log.Entry, device Device) {
 	command := "power on"
-	err := SendMagicPacket(config.MacAddr)
+	err := SendMagicPacket(device.MacAddr)
 	if err == nil {
 		answerSticker(w, chatID, command, "Я Сделяль")
 	} else {

@@ -16,6 +16,7 @@ func handleText(w http.ResponseWriter, updateMessage *Message, botLog *log.Entry
 	nginxName := []string{"nginx", "веб", "нгинкс", "фронт"}
 	botName := []string{"bot", "me", "себя", "бот"}
 	compName := []string{"включи", "комп", "poweron", "power", "играть"}
+	tvName := []string{"телик", "телевизор", "tv", "смотреть"}
 
 	if strContainsAny(messageText, restart...) {
 		switch {
@@ -46,7 +47,11 @@ func handleText(w http.ResponseWriter, updateMessage *Message, botLog *log.Entry
 	}
 
 	if strContainsAny(messageText, compName...) {
-		executePoweron(w, chatID, botLog)
+		executePoweron(w, chatID, botLog, config.Devices["comp"])
+		return
+	}
+	if strContainsAny(messageText, tvName...) {
+		executePoweron(w, chatID, botLog, config.Devices["tv"])
 		return
 	}
 

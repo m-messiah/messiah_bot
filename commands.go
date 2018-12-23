@@ -64,8 +64,10 @@ func handleCommand(w http.ResponseWriter, updateMessage *Message, botLog *log.En
 		executeRestart(w, chatID, botLog, "nginx")
 	case isCommand(messageText, "/restart_me"), isCommand(messageText, "/restart_bot"):
 		executeRestartMe(w, chatID, botLog)
-	case isCommand(messageText, "/poweron"):
-		executePoweron(w, chatID, botLog)
+	case isCommand(messageText, "/poweron_comp"):
+		executePoweron(w, chatID, botLog, config.Devices["comp"])
+	case isCommand(messageText, "/poweron_tv"):
+		executePoweron(w, chatID, botLog, config.Devices["tv"])
 	default:
 		answerSticker(w, chatID, messageText, "meh")
 	}
