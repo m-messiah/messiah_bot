@@ -32,7 +32,11 @@ func main() {
 	log.SetLevel(loglevel)
 	http.HandleFunc("/", BotHandle)
 	log.WithFields(log.Fields{"port": port}).Info("Start bot server")
-	for _, chatid := range config.Admins {
+	for schatid, _ := range config.Admins {
+		chatid, err := strconv.ParseInt(schatid, 10, 64)
+		if err != nil {
+			continue
+		}
 		go sendSticker(chatid, "А вот и Я")
 	}
 	http.ListenAndServe(":"+port, nil)

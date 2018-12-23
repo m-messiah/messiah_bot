@@ -4,7 +4,7 @@ type Config struct {
 	Port     int64
 	LogLevel string
 	Name     string
-	Admins   []int64
+	Admins   map[string]string
 	Token    string
 	Devices  map[string]Device
 }

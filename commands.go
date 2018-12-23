@@ -6,16 +6,6 @@ import (
 	"strings"
 )
 
-func allowAccess(w http.ResponseWriter, chatID int64, command string) bool {
-	for _, admin := range config.Admins {
-		if chatID == admin {
-			return true
-		}
-	}
-	answerSticker(w, chatID, command, "НетПути")
-	return false
-}
-
 func isCommand(text, command string) bool {
 	if strings.Index(text, command) == 0 {
 		if strings.Contains(strings.ToLower(text), "@"+strings.ToLower(config.Name)) || !strings.Contains(text, "@") {
@@ -50,11 +40,6 @@ func handleCommand(w http.ResponseWriter, updateMessage *Message, botLog *log.En
 		return
 	}
 
-	// Below are admin restricted commands
-	if !allowAccess(w, updateMessage.Chat.ID, messageText) {
-		return
-	}
-
 	switch {
 	case isCommand(messageText, "/uptime"):
 		executeUptime(w, chatID, botLog)
@@ -64,10 +49,15 @@ func handleCommand(w http.ResponseWriter, updateMessage *Message, botLog *log.En
 		executeRestart(w, chatID, botLog, "nginx")
 	case isCommand(messageText, "/restart_me"), isCommand(messageText, "/restart_bot"):
 		executeRestartMe(w, chatID, botLog)
-	case isCommand(messageText, "/poweron_comp"):
-		executePoweron(w, chatID, botLog, config.Devices["comp"])
-	case isCommand(messageText, "/poweron_tv"):
-		executePoweron(w, chatID, botLog, config.Devices["tv"])
+	case isCommand(messageText, "/poweron_"):
+		command_args := strings.SplitN(messageText, "_", 2)
+		device, ok := config.Devices[command_args[1]]
+		if !ok {
+			log.WithFields(log.Fields{"chat": chatID, "command": "power on", "device": command_args[1]}).Error("Device not found")
+			answerSticker(w, chatID, "power on", "НетПути")
+			return
+		}
+		executePoweron(w, chatID, botLog, device)
 	default:
 		answerSticker(w, chatID, messageText, "meh")
 	}

@@ -10,6 +10,15 @@ import (
 	"strings"
 )
 
+func allowAccess(w http.ResponseWriter, chatID int64, command string) bool {
+	_, ok := config.Admins[strconv.FormatInt(chatID, 10)]
+	if !ok {
+		answerSticker(w, chatID, command, "НетПути")
+		return false
+	}
+	return true
+}
+
 func BotHandle(w http.ResponseWriter, r *http.Request) {
 	bytes, _ := ioutil.ReadAll(r.Body)
 	var update Update
@@ -25,16 +34,20 @@ func BotHandle(w http.ResponseWriter, r *http.Request) {
 	botLog.Debug("Accept request")
 
 	switch {
+	case updateMessage.Sticker != nil:
+		handleSticker(w, updateMessage, botLog)
+	case updateMessage.Contact != nil:
+		handleContact(w, updateMessage, botLog)
 	case updateMessage.Text != nil:
+		// Restrict access for all
+		if !allowAccess(w, updateMessage.Chat.ID, *updateMessage.Text) {
+			return
+		}
 		if strings.Index(*updateMessage.Text, "/") != 0 {
 			handleText(w, updateMessage, botLog)
 		} else {
 			handleCommand(w, updateMessage, botLog)
 		}
-	case updateMessage.Sticker != nil:
-		handleSticker(w, updateMessage, botLog)
-	case updateMessage.Contact != nil:
-		handleContact(w, updateMessage, botLog)
 	}
 }
 
