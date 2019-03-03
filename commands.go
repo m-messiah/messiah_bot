@@ -58,6 +58,15 @@ func handleCommand(w http.ResponseWriter, updateMessage *Message, botLog *log.En
 			return
 		}
 		executePoweron(w, chatID, botLog, device)
+	case isCommand(messageText, "/poweroff_"):
+		command_args := strings.SplitN(messageText, "_", 2)
+		_, ok := config.Devices[command_args[1]]
+		if !ok {
+			log.WithFields(log.Fields{"chat": chatID, "command": "power off", "device": command_args[1]}).Error("Device not found")
+			answerSticker(w, chatID, "power off", "НетПути")
+			return
+		}
+		executePoweroff(w, chatID, botLog, command_args[1])
 	default:
 		answerSticker(w, chatID, messageText, "meh")
 	}

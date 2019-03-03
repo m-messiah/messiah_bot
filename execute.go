@@ -62,3 +62,13 @@ func executePoweron(w http.ResponseWriter, chatID int64, botLog *log.Entry, devi
 		answerSticker(w, chatID, command, "Ждун Error")
 	}
 }
+
+func executePoweroff(w http.ResponseWriter, chatID int64, botLog *log.Entry, deviceName string) {
+	command := "power off"
+	output, ok := execSysCommand(botLog, "ansible-playbook", "-i", "/opt/ansible/hosts", "/opt/ansible/shutdown_"+deviceName+".yaml")
+	if ok {
+		answerMessage(w, chatID, command, "OK\n"+output)
+	} else {
+		answerMessage(w, chatID, command, "FAIL\n"+output)
+	}
+}
