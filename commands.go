@@ -43,12 +43,14 @@ func handleCommand(w http.ResponseWriter, updateMessage *Message, botLog *log.En
 	switch {
 	case isCommand(messageText, "/uptime"):
 		executeUptime(w, chatID, botLog)
-	case isCommand(messageText, "/restart_tor"):
-		executeRestart(w, chatID, botLog, "tor")
-	case isCommand(messageText, "/restart_nginx"):
-		executeRestart(w, chatID, botLog, "nginx")
 	case isCommand(messageText, "/restart_me"), isCommand(messageText, "/restart_bot"):
 		executeRestartMe(w, chatID, botLog)
+	case isCommand(messageText, "/restart_"):
+		command_args := strings.SplitN(messageText, "_", 2)
+		executeRestart(w, chatID, botLog, command_args[1])
+	case isCommand(messageText, "/status_"):
+		command_args := strings.SplitN(messageText, "_", 2)
+		executeStatus(w, chatID, botLog, command_args[1])
 	case isCommand(messageText, "/poweron_"):
 		command_args := strings.SplitN(messageText, "_", 2)
 		device, ok := config.Devices[command_args[1]]
